@@ -1,192 +1,215 @@
-### PanelSwitchHelper
 [![](https://travis-ci.org/YummyLau/PanelSwitchHelper.svg?branch=master)](https://travis-ci.org/YummyLau/panelSwitchHelper)
 ![Language](https://img.shields.io/badge/language-java-orange.svg)
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Language](https://img.shields.io/badge/language-kotlin-orange.svg)
+![Version](https://img.shields.io/badge/version-1.3.13-blue.svg)
 ![Size](https://img.shields.io/badge/size-14K-brightgreen.svg)
 
-README: [English](https://github.com/YummyLau/PanelSwitchHelper/blob/master/README.md) | [中文](https://github.com/YummyLau/PanelSwitchHelper/blob/master/README-zh.md)
+README: [中文文档](https://github.com/YummyLau/PanelSwitchHelper/blob/master/README-zh.md)
 
-#### Version Update
+### Introduction to the framework
 
-* 1.0.1(2019-07-08) Support compatible with AndroidQ+ focus conflict, support video mode
-* 1.0.2(2019-11-05) Support WeChat sliding list to close the panel and list the response to the sliding event to enhance the user experience
-* 1.0.3(2019-11-06) Fix [issue](https://github.com/YummyLau/PanelSwitchHelper/issues/10) Scene issues
-* 1.0.4(2019-11-18) Added support for Dialog/Fragment/DialogFragment
-* 1.0.5 (2019-11-26) Support for special models such as Huawei / Xiaomi that support the hiding of dynamic navigation bar
+When developing a chat/video/live/information interface, users are expected to maintain a smooth transition between the input method and the function panel (such as the expression panel/more options panel, etc.). Investigate the mainstream app effects and implementation in the market, and realize a set of input panel switching framework compatible with multiple scenes. Currently the framework has been tested and used.
 
-#### What to do
+### Framework advantages
 
-When developing a chat page, the developer wants the user to keep a smooth transition without flickering during the keyboard and function panel (such as the emoticon panel/more options panel). Referring to the mainstream social app effect and implementation in the market, a variety of implementation ideas on the integrated Internet, the most integrated into a template framework, the template framework has been tested and used.
+* Improve the traditional technical solution of using `Weight+LinearLayout` to dynamically change the layout height to suit the panel, and support multiple native ViewGroup containers
+* In pursuit of a smoother adaptation effect, when the input method dynamically adjusts the height or dynamically hides the navigation bar, the function panel can be adapted in real time
+* In pursuit of a smoother switching effect, the sliding mode is supported, the sliding will be smoother, and the fixed mode is also supported
+* Rich model adaptation, adapt to non-conventional Phone models such as full screen/bang screen/digging screen/Pad
+* Rich scene support, support Activity/Fragment/Dialog/PopupWindow, apply to chat/video/live broadcast/stream comment, etc.
+* Rich API support, customizable content container, business panel, flexible control panel hiding, flexible control of switching panel speed
+* Support full screen mode, and panel switching can also be handled in FullScreen mode
 
-##### Show results
+For more details, please refer to
 
-* Figure 1: Core function display
-* Figure 2: 1.0.1 update support video function
-* Figure 3: 1.0.5 update supports dialog/fragment/dialogFragment/popupwindow, various immersive scenes
+ * [Introduction to scenario usage](https://github.com/YummyLau/PanelSwitchHelper/blob/master/README_SENCE.md)
+ * [API Usage Guide](https://github.com/YummyLau/PanelSwitchHelper/blob/master/README_API.md)
+ * [Library version update log] (https://github.com/YummyLau/PanelSwitchHelper/blob/master/README_UPDATE.md)
 
-<img src="https://raw.githubusercontent.com/YummyLau/PanelSwitchHelper/master/source/panel_switch.gif" width = "270" height = "480" alt="activity layout"/><img src="https://raw.githubusercontent.com/YummyLau/PanelSwitchHelper/master/source/panel_switch_1.0.1.gif" width = "270" height = "480" alt="activity layout" /><img src="https://raw.githubusercontent.com/YummyLau/PanelSwitchHelper/master/source/panel_switch_1.0.4.gif" width = "270" height = "480" alt="activity layout" />
+Demo content is as follows
 
-##### Implementation
-Get the keyboard's height by listening to the window's changes and dynamically adjust the layout to achieve a smooth transition switch panel.
+<img src="https://github.com/YummyLau/PanelSwitchHelper/blob/master/source/demo.png" width = "360" height = "790"/>
 
-<img src="https://raw.githubusercontent.com/YummyLau/PanelSwitchHelper/master/source/panel_switch_layout.jpg" width = "696" height = "703" alt="activity layout" align=center />
+Download from QR code
 
-The core classes ：
+<img src="https://github.com/YummyLau/PanelSwitchHelper/blob/master/source/qr_code_apk.png" width = "256" height = "256"/>
 
-* *PanelSwitchLayout* ，including the yellow area, can only contain *PanelContainer* and *PanelSwitchLayout* and implement some auxiliary functions
-* *ContentContainer* ，including the blue area, can store display content such as list content. And store the layout that triggers the switch, such as input box emoticons, etc.
-* *PanelContainer* ， including the green area, only for the switchable panel (*PanelView*), the developer customizes the *PanelView* panel.
-* *EmptyView* ， Optional configuration, generally recommended, support for 1.0.2 update function
+The Androidx version runs by default. If you need to open non-Androidx, open the app in `Settings.gradle` and close the Androidx configuration in `gradle.properties`.
 
-Take activity_sample_layout.xml as an example
+### Instructions
+
+1. Add library dependencies in module script `build.gradle`
+
+```
+implementation'com.effective.android:panelSwitchHelper:1.3.13'
+
+//or for androidx
+implementation 'com.effective.android:panelSwitchHelper-androidx:1.3.13'
+```
+
+2. Use the container provided by the framework in the layout file Xml
 
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.effective.android.panel.view.PanelSwitchLayout
-        android:id="@+id/panel_switch_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Content area -->
-        <!-- edit_view, specify an EditText for input, required-->
-        <!-- empty_view, specify the panel or keyboard to hide when the user clicks the View corresponding to the ID. -->
-        <com.effective.android.panel.view.ContentContainer
-            android:id="@+id/content_view"
+		 <!-- Layout that does not need to be processed by the frame, can be arranged freely -->
+        <RelativeLayout
+            android:id="@+id/cus_title_bar"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            app:edit_view="@id/edit_text"
-            app:empty_view="@id/empty_view">
+            android:layout_height="50dp"
+            android:background="@color/colorPrimary"
+            android:visibility="gone">
 
-            <FrameLayout
+            <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="#ebebeb">
+                android:layout_height="match_parent"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="20dp"
+                android:text="自定义标题栏"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
-                <android.support.v7.widget.RecyclerView
+        <com.effective.android.panel.view.PanelSwitchLayout
+            android:id="@+id/panel_switch_layout"
+            android:layout_width="match_parent"
+            app:animationSpeed="standard"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- ContentContainer -->
+            <!-- linear_edit_view, Specify an EditText for input, required-->
+            <!-- linear_auto_reset_enable,Specifies whether the LinearContentContainer can accept Touch events and automatically hide the panel-->
+            <!-- linear_auto_reset_area, Specifies whether the LinearContentContainer only accepts Touch events in a View area to customize the hidden panel-->
+            <com.effective.android.panel.view.content.LinearContentContainer
+                android:id="@+id/content_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:edit_view="@id/edit_text">
+
+                <com.example.demo.scene.chat.view.HookActionUpRecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <com.effective.android.panel.view.EmptyView
-                    android:id="@+id/empty_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </FrameLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_input_layout"
-                android:gravity="bottom"
-                android:minHeight="@dimen/dp_50"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/dp_7.5"
-                android:paddingLeft="@dimen/dp_10"
-                android:paddingRight="@dimen/dp_10">
-
-                <!-- More entrance -->
-                <ImageView
-                    android:id="@+id/add_btn"
-                    android:layout_width="@dimen/dp_35"
-                    android:layout_height="@dimen/dp_35"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:src="@drawable/icon_add" />
-
-                <!-- Input entrance -->
-                <EditText
-                    android:id="@+id/edit_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/dp_10"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:layout_weight="1"
-                    android:background="@drawable/selector_edit_focus"
-                    android:maxLines="5"
-                    android:minHeight="@dimen/dp_35"
-                    android:paddingLeft="@dimen/dp_3"
-                    android:paddingRight="@dimen/dp_3"
-                    android:imeOptions="actionSearch"
-                    android:paddingBottom="@dimen/dp_3"
-                    android:paddingTop="@dimen/dp_7.5"
-                    android:textCursorDrawable="@drawable/shape_edit_cursor"
-                    android:textSize="@dimen/sp_16" />
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_35"
-                    android:orientation="horizontal">
+                    android:id="@+id/bottom_action"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_input_layout"
+                    android:gravity="bottom"
+                    android:minHeight="@dimen/dp_50"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:paddingBottom="@dimen/dp_7.5">
 
-                    <!-- Emotion entrance -->
+                    <!--More entrances -->
                     <ImageView
-                        android:id="@+id/emotion_btn"
+                        android:id="@+id/add_btn"
                         android:layout_width="@dimen/dp_35"
                         android:layout_height="@dimen/dp_35"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:src="@drawable/icon_add" />
+
+                    <!-- Input entrances -->
+                    <EditText
+                        android:id="@+id/edit_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/dp_10"
                         android:layout_marginRight="@dimen/dp_10"
-                        android:src="@drawable/selector_emotion_btn" />
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_edit_focus"
+                        android:imeOptions="actionSearch"
+                        android:maxLines="5"
+                        android:minHeight="@dimen/dp_35"
+                        android:paddingLeft="@dimen/dp_3"
+                        android:paddingTop="@dimen/dp_7.5"
+                        android:paddingRight="@dimen/dp_3"
+                        android:paddingBottom="@dimen/dp_3"
+                        android:textCursorDrawable="@drawable/shape_edit_cursor"
+                        android:textSize="@dimen/sp_16" />
 
-                    <TextView
-                        android:id="@+id/send"
-                        android:layout_width="@dimen/dp_50"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="@dimen/dp_35"
-                        android:background="@drawable/selector_send_btn"
-                        android:gravity="center"
-                        android:text="@string/send"
-                        android:textColor="@color/color_send_btn"
-                        android:textSize="@dimen/sp_15" />
+                        android:orientation="horizontal">
+
+                        <!-- Emotion entrances -->
+                        <ImageView
+                            android:id="@+id/emotion_btn"
+                            android:layout_width="@dimen/dp_35"
+                            android:layout_height="@dimen/dp_35"
+                            android:layout_marginEnd="@dimen/dp_10"
+                            android:layout_marginRight="@dimen/dp_10"
+                            android:src="@drawable/selector_emotion_btn" />
+
+                        <TextView
+                            android:id="@+id/send"
+                            android:layout_width="@dimen/dp_50"
+                            android:layout_height="@dimen/dp_35"
+                            android:background="@drawable/selector_send_btn"
+                            android:gravity="center"
+                            android:text="@string/send"
+                            android:textColor="@color/color_send_btn"
+                            android:textSize="@dimen/sp_15" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
-            </LinearLayout>
-
-        </com.effective.android.panel.view.ContentContainer>
+            </com.effective.android.panel.view.content.LinearContentContainer>
 
 
-        <!-- Panel area, can only contain PanelView-->
-        <com.effective.android.panel.view.PanelContainer
-            android:id="@+id/panel_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- Each panel -->
-            <!-- panel_layout, used to specify the layout corresponding to the ID of the panel.-->
-            <!-- panel_trigger, used to switch to the panel when the user clicks on the View corresponding to the ID -->
-            <!-- panel_toggle, used to cut back the keyboard when the user clicks the view corresponding to panel_trigger again when the panel is displayed.-->
-            <com.effective.android.panel.view.PanelView
-                android:id="@+id/panel_emotion"
+            <!--Panel Container, can only contain PanelView-->
+            <com.effective.android.panel.view.panel.PanelContainer
+                android:id="@+id/panel_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:panel_layout="@layout/panel_emotion_layout"
-                app:panel_trigger="@id/emotion_btn" />
+                android:background="@color/common_page_bg_color"
+                android:layout_height="wrap_content">
 
-            <com.effective.android.panel.view.PanelView
-                android:id="@+id/panel_addition"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:panel_layout="@layout/panel_add_layout"
-                app:panel_trigger="@id/add_btn" />
+                <!-- Each panel -->
+                <!-- panel_layout,Used to specify the layout corresponding to the ID of the panel, required-->
+                <!-- panel_trigger, Used to switch to this panel when the user clicks the View corresponding to this ID -->
+                <!-- panel_toggle ,When the panel is displayed, if the user clicks the View corresponding to panel_trigger again, whether to switch back to the input method-->
+                <com.effective.android.panel.view.panel.PanelView
+                    android:id="@+id/panel_emotion"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:panel_layout="@layout/panel_emotion_layout"
+                    app:panel_trigger="@id/emotion_btn" />
 
-        </com.effective.android.panel.view.PanelContainer>
-    </com.effective.android.panel.view.PanelSwitchLayout>
+                <!-- In addition to using the PanelView provided by the framework, you can also use a custom Panel -->
+                <com.example.demo.scene.api.CusPanelView
+                    android:id="@+id/panel_addition"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cus_panel_trigger="@id/add_btn"
+                    app:cus_panel_toggle="true"/>
+
+            </com.effective.android.panel.view.panel.PanelContainer>
+        </com.effective.android.panel.view.PanelSwitchLayout>
+
+    </LinearLayout>
 </layout>
 ```
 
 
-#### How to quote
-1. Add dependencies in module build.gradle file。
-```
-implementation 'com.effective.android:panelSwitchHelper:1.0.5'
-```
+3. Initialize the PanelSwitchHelper object, and the framework will automatically collect layout information. At the same time, intercept the processing when the return key is adjusted.
 
-2. Initialize the PanelSwitchHelper object in the activity#onStart method, in the activity#onBackPressed hook return。
 ```
+	//Activity scene, initialized in onStart method, others such as Fragment/Dialog/PopupWindow refer to Demo
    private PanelSwitchHelper mHelper;
 
    @Override
@@ -194,32 +217,66 @@ implementation 'com.effective.android:panelSwitchHelper:1.0.5'
         super.onStart();
         if (mHelper == null) {
             mHelper = new PanelSwitchHelper.Builder(this)
-                    .bindPanelSwitchLayout(R.id.panel_switch_layout)        //Binding a panelSwitchLayout
-                    .bindPanelContainerId(R.id.panel_container)             //Binding a contentContainer
-                    .bindContentContainerId(R.id.content_view)              //Binding a panelContainer
-                    .build();
+                   .addKeyboardStateListener {
+                        onKeyboardChange {
+                            //Optional implementation, monitor input method changes
+                        }
+                    }
+                    .addEditTextFocusChangeListener {
+                        onFocusChange { _, hasFocus ->
+							 //Optional implementation, monitor input box focus changes
+                        }
+                    }
+                    .addViewClickListener {
+                        onClickBefore {
+ 							//Optional implementation, listen for trigger clicks
+                        }
+                    }
+                    .addPanelChangeListener {
+                        onKeyboard {
+ 								//Optional implementation, input method display callback
+                        }
+                        onNone {
+ 								//Optional implementation, default state callback
+                        }
+                        onPanel {
+ 								//Optional implementation, panel display callback
+                        }
+                        onPanelSizeChange { panelView, _, _, _, width, height ->
+ 								//Optional implementation, dynamic callback of panel height change caused by input method dynamic adjustment
+                        }
+                    }
+                    .addContentScrollMeasurer { //Optional, in sliding mode, the sliding distance can be customized for the view in the content panel, the default sliding distance is defaultDistance
+                        getScrollDistance { defaultDistance -> defaultDistance - 200 }
+                        getScrollViewId { R.id.recycler_view }
+                    }
+                    .addPanelHeightMeasurer {   //Optional It is used to set the height of the front panel without obtaining the height of the input method. If it is not set, the height within the frame is the default
+                        getTargetPanelDefaultHeight { DisplayUtils.dip2px(this@DefaultHeightPanelActivity,400f)}
+                        getPanelTriggerId { R.id.add_btn }
+                    }  
+                    .logTrack(true)                   //Optional, default false, whether to enable log information output
+                    .build(true)			          //Optional, default false, whether to open the input method by default
         }
     }
 
+
    @Override
    public void onBackPressed() {
+   		 //When the user presses the return key, if the panel is displayed, it needs to be hidden
         if (mHelper != null && mHelper.hookSystemBackForHindPanel()) {
-                return;
+            return;
         }
         super.onBackPressed();
    }
 
 ```
 
+### Expectations
 
-3. The framework provides a variety of APIs to solve special situations, and you need to learn to use it flexibly (for ultra-complex requirements)
+The project was written only to improve the efficiency of daily development and focus on processing business. If you have better practices or suggestions, please write to yummyl.lau@gmail.com.
 
-```
-//The specific method is visible in the source code
-PanelSwitchHelper, Provide hidden input method or panel and display input method
-PanelHelper, Provide hidden input method, display input method, judge full screen, get status bar height, navigation bar height, whether it is horizontal and vertical screen, etc.
-```
+You can also add WeChat and enter the feedback group to discuss feedback.
 
+<img src = "https://github.com/YummyLau/PanelSwitchHelper/blob/master/source/qr_code_wx.jpg" width = "385" height = "385" />
 
-#### Expect
-The project was written only to improve the efficiency of day-to-day development and focus on the business. If you have a better practice or suggestions, please write to yummyl.lau@gmail.com.
+If the framework is helpful to you, Amway can give the partners around you, and every star is an affirmation of the framework.
