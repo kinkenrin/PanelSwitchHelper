@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion config.compile_sdk_version
@@ -16,19 +18,47 @@ android {
         versionName config.version_name
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+            keyAlias 'keystore'
+            keyPassword 'mm123456'
+            storeFile file('../android.keystore')
+            storePassword '123456'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    // 配置一个路径专门存放kotlin文件
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 }
 
 dependencies {
-    "$implementation" fileTree(include: ['*.jar'], dir: 'libs')
-    "$implementation" deps.support.v7
-    "$implementation" deps.support.recyclerview
-    "$implementation" deps.pageindicator
-//    "$implementation" deps.panelSwitchHelper
-    implementation project(":panel")
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation deps.support.v7
+    implementation deps.support.recyclerview
+    implementation deps.support.constraint
+    implementation deps.pageindicator
+    implementation deps.circleimageview
+    implementation deps.panelSwitchHelper
+//    implementation project(":panel-kotlin")
 }

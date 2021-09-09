@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.effective">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -18,30 +19,45 @@
         </activity>
 
         <activity
-            android:name="com.example.demo.ChatSampleActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
+            android:name="com.example.demo.scene.chat.ChatActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
-            android:name="com.example.demo.ChatSampleFragmentActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
+            android:name="com.example.demo.scene.chat.ChatFragmentActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
-            android:name="com.example.demo.VideoSampleActivity"
+            android:name="com.example.demo.scene.api.ContentActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name="com.example.demo.scene.api.ResetActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name="com.example.demo.scene.api.PanelActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name="com.example.demo.scene.video.BiliBiliSampleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/VideoActivityTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name="com.example.demo.scene.live.huya.PcHuyaLiveActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/VideoActivityTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name="com.example.demo.scene.live.douyin.PhoneDouyinLiveActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/VideoActivityTheme"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity android:name="com.example.demo.scene.feed.FeedActivity" />
+
     </application>
 
 </manifest>
